@@ -1,0 +1,4 @@
+jdbc.jdbcUrl=jdbc\:oracle\:thin\:@169.254.139.180\:1521/orcl
+jdbc.driverClass=oracle.jdbc.OracleDriver
+jdbc.user=scott
+jdbc.password=tiger

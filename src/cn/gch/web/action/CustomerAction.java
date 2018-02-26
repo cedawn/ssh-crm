@@ -1,0 +1,73 @@
+package cn.gch.web.action;
+
+import org.apache.commons.lang3.StringUtils;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Restrictions;
+
+
+import cn.gch.domain.Customer;
+import cn.gch.service.CustomerService;
+import cn.gch.utils.PageBean;
+
+import com.opensymphony.xwork2.ActionContext;
+import com.opensymphony.xwork2.ActionSupport;
+import com.opensymphony.xwork2.ModelDriven;
+
+public class CustomerAction extends ActionSupport implements ModelDriven<Customer>{
+	Customer customer=new Customer();
+	private CustomerService customerService;
+	private Integer currentPage;
+	private Integer pageSize;
+	
+	public String list() throws Exception{
+		DetachedCriteria dc = DetachedCriteria.forClass(Customer.class);
+		
+		if(StringUtils.isNotBlank(customer.getCust_name())){
+			 dc.add(Restrictions.like("cust_name","%"+customer.getCust_name()+"%"));
+		}
+		PageBean pb=customerService.getPageBean(dc,currentPage,pageSize);
+		ActionContext.getContext().put("pageBean", pb);
+		
+		return "list";		
+	}
+	
+	
+	public String add() throws Exception{
+		customerService.saveOrUpdate(customer);
+		
+		return "toList";
+	}
+	public String toEdit() throws Exception{
+		Customer c=customerService.getById(customer.getCust_id());
+		ActionContext.getContext().put("customer", c);
+		return "edit";
+	}
+	public String delete() throws Exception{
+		customerService.delete(customer.getCust_id());
+		return "delete";
+	}
+	
+	public Integer getCurrentPage() {
+		return currentPage;
+	}
+	public void setCurrentPage(Integer currentPage) {
+		this.currentPage = currentPage;
+	}
+	public Integer getPageSize() {
+		return pageSize;
+	}
+	public void setPageSize(Integer pageSize) {
+		this.pageSize = pageSize;
+	}
+	
+	public void setCustomerService(CustomerService customerService) {
+		this.customerService = customerService;
+	}
+
+	@Override
+	public Customer getModel() {
+		
+		return customer;
+	}
+	
+}
